@@ -48,4 +48,4 @@ Matt is not a developer. Explain everything in plain language and give exact com
 ## Build status
 - [x] Phase 1: Page and games list
 - [x] Phase 2: Deploy to Vercel and add real links
-- [ ] Phase 3: Polish and home screen icon
+- [x] Phase 3: Polish and home screen icon

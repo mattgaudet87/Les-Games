@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Les Games</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#fff8ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Les Games">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
@@ -157,6 +164,35 @@
     color: var(--muted);
     font-size: 14px;
   }
+
+  @keyframes tile-pop-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes icon-wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+  }
+
+  .tile {
+    animation: tile-pop-in 0.2s ease both;
+    animation-delay: calc(var(--i, 0) * 0.03s);
+  }
+
+  .tile-icon.wiggle {
+    animation: icon-wiggle 0.3s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile {
+      animation: none;
+    }
+    .tile-icon.wiggle {
+      animation: none;
+    }
+  }
 </style>
 </head>
 <body>
@@ -173,12 +209,15 @@
 </div>
 
 <script>
-  // How to add a game:
-  // 1. Copy one of the entries below.
-  // 2. Give it a short unique id, its real name, and the web address (url) where it lives.
-  // 3. Pick a color (any hex code) and an icon key from the ICONS object further down.
+  // How to add a game to Les Games:
+  // 1. Copy one of the entries below and give it a short unique id and its real name.
+  // 2. Paste the game's web address into url. Leave url as '' if you do not have it yet.
+  // 3. Pick a color (any hex code) that is different from the other tiles, and pick an
+  //    icon key from the ICONS object further down (or add a new icon there for it).
   // 4. Set status to "live" once it has a real url, or "soon" if it is not ready yet.
-  // A game with status "soon" is shown faded and cannot be tapped, no matter what url it has.
+  // A game with status "soon" is shown faded with a "Soon" tag and cannot be tapped,
+  // no matter what url it has. Switching an existing game to live is the same: fill in
+  // its url and change status to "live".
   const GAMES = [
     { id: 'sudoku', name: 'Wolf Sudoku', url: 'https://sudoku-sage-sigma.vercel.app/', color: '#5b8def', icon: 'grid', status: 'live' },
     { id: 'saloon', name: 'Saloon Defense', url: 'https://saloon-defense.vercel.app/', color: '#f28c38', icon: 'saloon', status: 'live' },
@@ -271,15 +310,22 @@
     return [...played, ...unplayed, ...soon];
   }
 
-  function renderTile(game, lastPlayed) {
+  function renderTile(game, lastPlayed, index) {
     const isLive = game.status === 'live';
     const icon = ICONS[game.icon] || ICONS.fallback;
     const tag = document.createElement(isLive ? 'a' : 'div');
     tag.className = 'tile' + (isLive ? '' : ' soon');
+    tag.style.setProperty('--i', index);
+
+    const iconBox = document.createElement('span');
+    iconBox.className = 'tile-icon';
 
     if (isLive) {
       tag.href = game.url;
-      tag.addEventListener('click', () => writeLastPlayed(game.id));
+      tag.addEventListener('click', () => {
+        writeLastPlayed(game.id);
+        iconBox.classList.add('wiggle');
+      });
     } else {
       const soonTag = document.createElement('span');
       soonTag.className = 'soon-tag';
@@ -287,8 +333,6 @@
       tag.appendChild(soonTag);
     }
 
-    const iconBox = document.createElement('span');
-    iconBox.className = 'tile-icon';
     iconBox.style.background = game.color;
     iconBox.innerHTML = icon;
     tag.appendChild(iconBox);
@@ -315,7 +359,7 @@
     grid.innerHTML = '';
     const lastPlayed = readLastPlayed();
     const ordered = sortGames(GAMES, lastPlayed);
-    ordered.forEach(game => grid.appendChild(renderTile(game, lastPlayed)));
+    ordered.forEach((game, index) => grid.appendChild(renderTile(game, lastPlayed, index)));
   }
 
   document.getElementById('header-icon').innerHTML = ICONS.controller;
