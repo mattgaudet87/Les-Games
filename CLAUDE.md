@@ -18,7 +18,7 @@ Matt is not a developer. Explain everything in plain language and give exact com
 ## The games list (the only thing Matt edits to add a game)
 - A `GAMES` array at the very top of the script, with a plain-language comment above it explaining how to add a game.
 - Each entry: id, name, url, color (hex), icon (key of an SVG in the ICONS object), status ("live" or "soon").
-- Current games: Wolf Sudoku (blue #5b8def, grid icon), Saloon Defense (orange #f28c38, saloon icon), High Noon (red #e63946, star icon), Ballin (gold #d4a017, basketball icon).
+- Current games: Wolf Sudoku (blue #5b8def, grid icon), Saloon Defense (orange #f28c38, saloon icon), High Noon (red #e63946, star icon), Ballin (gold #d4a017, basketball icon), Wurdle (green #3fa66b, wurdle icon).
 - Real URLs come from Matt. Until he gives one, that game stays "soon".
 
 ## Locked decisions
